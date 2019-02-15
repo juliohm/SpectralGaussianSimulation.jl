@@ -1,0 +1,10 @@
+name = "SpectralGaussianSimulation"
+uuid = "1f53f557-16c0-5f8f-980f-fb7167e19889"
+authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com>"]
+version = "0.1.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
