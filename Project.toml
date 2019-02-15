@@ -3,6 +3,10 @@ uuid = "1f53f557-16c0-5f8f-980f-fb7167e19889"
 authors = ["Júlio Hoffimann <julio.hoffimann@gmail.com>"]
 version = "0.1.0"
 
+[deps]
+GeoStatsBase = "323cb8eb-fbf6-51c0-afd0-f8fba70507b2"
+Variography = "04a0146e-e6df-5636-8d7f-62fa9eb0b20c"
+
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
