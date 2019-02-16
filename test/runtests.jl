@@ -1,5 +1,6 @@
 using GeoStatsBase
 using GeoStatsDevTools
+using Variography
 using SpectralGaussianSimulation
 using Plots; gr()
 using VisualRegressionTests
