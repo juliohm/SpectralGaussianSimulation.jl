@@ -10,8 +10,8 @@ of the spectrum, and a realization is produced by an inverse Fourier transform.
 
 The method is limited to simulations on regular grids, and care must be taken
 to make sure that the correlation length is small enough compared to the grid
-size. As a general rule of thumb, try to avoid correlation lengths greater than
-1/3 of the grid. The method is extremely fast, and can be used to generate large
+size. As a general rule of thumb, avoid correlation lengths greater than 1/3
+of the grid. The method is extremely fast, and can be used to generate large
 3D realizations.
 
 ## Installation
