@@ -25,11 +25,12 @@ Spectral Gaussian simulation (a.k.a. FFT simulation).
 
 ### References
 
-TODO
+Gutjahr 1997. *General joint conditional simulations using a fast
+Fourier transform method.*
 """
 @simsolver SpecGaussSim begin
   @param variogram = GaussianVariogram()
-  @param mean = nothing
+  @param mean = 0.0
 end
 
 function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
@@ -51,14 +52,12 @@ function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
       varparams = SpecGaussSimParam()
     end
 
-    # determine variogram model
+    # determine variogram model and mean
     γ = varparams.variogram
+    μ = varparams.mean
 
     # check stationarity
     @assert isstationary(γ) "variogram model must be stationary"
-
-    # determine field mean
-    μ = isnothing(varparams.mean) ? V(0) : varparams.mean
 
     # compute covariances between centroid and all locations
     covs = sill(γ) .- pairwise(γ, pdomain, [c], 1:npts)
