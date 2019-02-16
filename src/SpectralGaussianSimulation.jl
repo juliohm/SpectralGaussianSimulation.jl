@@ -21,8 +21,8 @@ Spectral Gaussian simulation (a.k.a. FFT simulation).
 
 ## Parameters
 
-* `variogram` - theoretical variogram (default to GaussianVariogram())
-* `mean`      - mean of Gaussian field (default to 0)
+* `variogram` - theoretical variogram (default to `GaussianVariogram()`)
+* `mean`      - mean of Gaussian field (default to `0`)
 
 ## Global parameters
 
