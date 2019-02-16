@@ -10,6 +10,7 @@ import GeoStatsBase: preprocess, solve_single
 using Variography
 using Statistics
 using FFTW
+using CpuId
 
 export SpecGaussSim
 
@@ -23,6 +24,10 @@ Spectral Gaussian simulation (a.k.a. FFT simulation).
 * `variogram` - theoretical variogram (default to GaussianVariogram())
 * `mean`      - mean of Gaussian field (default to 0)
 
+## Global parameters
+
+* `threads` - number of threads in FFT (default to all physical cores)
+
 ### References
 
 Gutjahr 1997. *General joint conditional simulations using a fast
@@ -31,6 +36,7 @@ Fourier transform method.*
 @simsolver SpecGaussSim begin
   @param variogram = GaussianVariogram()
   @param mean = 0.0
+  @global threads = cpucores()
 end
 
 function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
@@ -40,6 +46,9 @@ function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
   dims = size(pdomain)
   center = CartesianIndex(dims .÷ 2)
   c = LinearIndices(dims)[center]
+
+  # number of threads in FFTW
+  FFTW.set_num_threads(solver.threads)
 
   # result of preprocessing
   preproc = Dict{Symbol,NamedTuple}()
