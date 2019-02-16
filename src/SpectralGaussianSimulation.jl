@@ -58,17 +58,17 @@ function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
     @assert isstationary(γ) "variogram model must be stationary"
 
     # determine field mean
-    μ = isnothing(varparams.mean) : V(0) : varparams.mean
+    μ = isnothing(varparams.mean) ? V(0) : varparams.mean
 
     # compute covariances between centroid and all locations
-    C = sill(γ) .- pairwise(γ, pdomain, [c], 1:npts)
-    C = reshape(C, dims)
+    covs = sill(γ) .- pairwise(γ, pdomain, [c], 1:npts)
+    C = reshape(covs, dims)
 
-    # compute spectrum of given covariance
+    # move to frequency domain
     F = sqrt.(abs.(fft(fftshift(C)) ./ npts))
     F[1] = zero(V) # set reference level
 
-    # save preprocessed inputs for var
+    # save preprocessed inputs for variable
     preproc[var] = (γ=γ, μ=μ, F=F)
   end
 
@@ -76,7 +76,7 @@ function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
 end
 
 function solve_single(problem::SimulationProblem, var::Symbol,
-                      solver::SeqGaussSim, preproc)
+                      solver::SpecGaussSim, preproc)
   # retrieve problem info
   pdomain = domain(problem)
   npts = npoints(pdomain)
@@ -89,9 +89,17 @@ function solve_single(problem::SimulationProblem, var::Symbol,
   V = variables(problem)[var]
 
   # perturbation in frequency domain
-  P = F .* exp.(1im .* angle.(fft(rand(V, dims))))
-  R = real(ifft(P .* npts))
+  P = F .* exp.(im .* angle.(fft(randn(V, dims))))
+
+  # move back to time domain
+  Z = real(ifft(P .* npts))
 
   # adjust mean and variance
-  (sill(γ) / var(R, mean=zero(V))) .* R .+ μ
+  σ² = Statistics.var(Z, mean=zero(V))
+  Z .= √(sill(γ) / σ²) .* Z .+ μ
+
+  # flatten result
+  vec(Z)
+end
+
 end
