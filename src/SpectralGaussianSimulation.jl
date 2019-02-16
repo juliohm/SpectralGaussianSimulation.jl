@@ -65,7 +65,7 @@ function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
     C = reshape(covs, dims)
 
     # move to frequency domain
-    F = sqrt.(abs.(fft(fftshift(C)) ./ npts))
+    F = sqrt.(abs.(fft(fftshift(C))))
     F[1] = zero(V) # set reference level
 
     # save preprocessed inputs for variable
@@ -79,7 +79,6 @@ function solve_single(problem::SimulationProblem, var::Symbol,
                       solver::SpecGaussSim, preproc)
   # retrieve problem info
   pdomain = domain(problem)
-  npts = npoints(pdomain)
   dims = size(pdomain)
 
   # unpack preprocessed parameters
@@ -89,10 +88,10 @@ function solve_single(problem::SimulationProblem, var::Symbol,
   V = variables(problem)[var]
 
   # perturbation in frequency domain
-  P = F .* exp.(im .* angle.(fft(randn(V, dims))))
+  P = F .* exp.(im .* angle.(fft(rand(V, dims))))
 
   # move back to time domain
-  Z = real(ifft(P .* npts))
+  Z = real(ifft(P))
 
   # adjust mean and variance
   σ² = Statistics.var(Z, mean=zero(V))
