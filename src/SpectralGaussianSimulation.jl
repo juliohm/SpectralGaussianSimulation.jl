@@ -5,12 +5,13 @@
 module SpectralGaussianSimulation
 
 using GeoStatsBase
-import GeoStatsBase: preprocess, solve_single
 
 using Variography
 using Statistics
 using FFTW
 using CpuId
+
+import GeoStatsBase: preprocess, solve_single
 
 export SpecGaussSim
 
