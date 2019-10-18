@@ -27,7 +27,7 @@ test = ["GeoStatsBase", "Pkg", "VisualRegressionTests", "Plots", "ImageMagick", 
 
 [compat]
 CpuId = "^0.2"
-FFTW = "^0.2"
+FFTW = "^1.0"
 GeoStatsBase = "^0.6"
 Variography = "^0.4"
 julia = "1"
