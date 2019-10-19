@@ -1,7 +1,7 @@
 using SpectralGaussianSimulation
 using GeoStatsBase
 using Variography
-using Plots; gr(size=(950,200))
+using Plots; gr(size=(900,300))
 using VisualRegressionTests
 using Test, Pkg, Random
 
