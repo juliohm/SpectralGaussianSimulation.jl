@@ -11,7 +11,7 @@ using Statistics
 using FFTW
 using CpuId
 
-import GeoStatsBase: preprocess, solve_single
+import GeoStatsBase: preprocess, solvesingle
 
 export SpecGaussSim
 
@@ -52,62 +52,67 @@ function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
   FFTW.set_num_threads(solver.threads)
 
   # result of preprocessing
-  preproc = Dict{Symbol,NamedTuple}()
+  preproc = Dict()
 
-  for (var, V) in variables(problem)
-    # get user parameters
-    if var ∈ keys(solver.params)
-      varparams = solver.params[var]
-    else
-      varparams = SpecGaussSimParam()
+  for covars in covariables(problem, solver)
+    for var in covars.names
+      # get user parameters
+      varparams = covars.params[(var,)]
+
+      # get variable type
+      V = variables(problem)[var]
+
+      # determine variogram model and mean
+      γ = varparams.variogram
+      μ = varparams.mean
+
+      # check stationarity
+      @assert isstationary(γ) "variogram model must be stationary"
+
+      # compute covariances between centroid and all locations
+      covs = sill(γ) .- pairwise(γ, pdomain, [c], 1:npts)
+      C = reshape(covs, dims)
+
+      # move to frequency domain
+      F = sqrt.(abs.(fft(fftshift(C))))
+      F[1] = zero(V) # set reference level
+
+      # save preprocessed inputs for variable
+      preproc[var] = (γ=γ, μ=μ, F=F)
     end
-
-    # determine variogram model and mean
-    γ = varparams.variogram
-    μ = varparams.mean
-
-    # check stationarity
-    @assert isstationary(γ) "variogram model must be stationary"
-
-    # compute covariances between centroid and all locations
-    covs = sill(γ) .- pairwise(γ, pdomain, [c], 1:npts)
-    C = reshape(covs, dims)
-
-    # move to frequency domain
-    F = sqrt.(abs.(fft(fftshift(C))))
-    F[1] = zero(V) # set reference level
-
-    # save preprocessed inputs for variable
-    preproc[var] = (γ=γ, μ=μ, F=F)
   end
 
   preproc
 end
 
-function solve_single(problem::SimulationProblem, var::Symbol,
-                      solver::SpecGaussSim, preproc)
+function solvesingle(problem::SimulationProblem, covars::NamedTuple,
+                     solver::SpecGaussSim, preproc)
   # retrieve problem info
   pdomain = domain(problem)
   dims = size(pdomain)
 
-  # unpack preprocessed parameters
-  γ, μ, F = preproc[var]
+  varreal = map(covars.names) do var
+    # unpack preprocessed parameters
+    γ, μ, F = preproc[var]
 
-  # result type
-  V = variables(problem)[var]
+    # result type
+    V = variables(problem)[var]
 
-  # perturbation in frequency domain
-  P = F .* exp.(im .* angle.(fft(rand(V, dims))))
+    # perturbation in frequency domain
+    P = F .* exp.(im .* angle.(fft(rand(V, dims))))
 
-  # move back to time domain
-  Z = real(ifft(P))
+    # move back to time domain
+    Z = real(ifft(P))
 
-  # adjust mean and variance
-  σ² = Statistics.var(Z, mean=zero(V))
-  Z .= √(sill(γ) / σ²) .* Z .+ μ
+    # adjust mean and variance
+    σ² = Statistics.var(Z, mean=zero(V))
+    Z .= √(sill(γ) / σ²) .* Z .+ μ
 
-  # flatten result
-  vec(Z)
+    # flatten result
+    var => vec(Z)
+  end
+
+  Dict(varreal)
 end
 
 end
