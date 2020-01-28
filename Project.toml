@@ -26,8 +26,8 @@ VisualRegressionTests = "34922c18-7c2a-561c-bac1-01e79b2c4c92"
 test = ["GeoStatsBase", "Pkg", "VisualRegressionTests", "Plots", "ImageMagick", "QuartzImageIO", "Random", "Variography", "Test"]
 
 [compat]
-CpuId = "^0.2"
-FFTW = "^1.0"
-GeoStatsBase = "^0.7"
-Variography = "^0.5"
+CpuId = "0.2"
+FFTW = "1.0"
+GeoStatsBase = "0.7"
+Variography = "0.5"
 julia = "1"
