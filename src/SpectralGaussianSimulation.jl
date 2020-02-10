@@ -41,6 +41,8 @@ Fourier transform method.*
 end
 
 function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
+  hasdata(problem) && @warn "Conditional spectral Gaussian simulation is not currently supported"
+  
   # retrieve problem info
   pdomain = domain(problem)
   npts = npoints(pdomain)
