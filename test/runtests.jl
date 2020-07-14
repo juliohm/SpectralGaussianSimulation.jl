@@ -1,8 +1,7 @@
 using SpectralGaussianSimulation
 using GeoStatsBase
 using Variography
-using Plots; gr(size=(900,300))
-using VisualRegressionTests
+using Plots, VisualRegressionTests
 using Test, Pkg, Random
 
 # workaround GR warnings
@@ -20,7 +19,7 @@ end
 
 @testset "SpectralGaussianSimulation.jl" begin
   if visualtests
-    problem = SimulationProblem(RegularGrid{Float64}(100,100), :z => Float64, 3)
+    problem = SimulationProblem(RegularGrid(100,100), :z => Float64, 3)
 
     Random.seed!(2019)
     solver = SpecGaussSim(:z => (variogram=GaussianVariogram(range=10.),))
