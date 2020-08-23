@@ -24,11 +24,11 @@ end
     Random.seed!(2019)
     solver = SpecGaussSim(:z => (variogram=GaussianVariogram(range=10.),))
     solution = solve(problem, solver)
-    @plottest plot(solution) joinpath(datadir,"isotropic.png") !istravis
+    @plottest plot(solution,size=(900,300)) joinpath(datadir,"isotropic.png") !istravis
 
     Random.seed!(2019)
     solver = SpecGaussSim(:z => (variogram=GaussianVariogram(distance=Ellipsoidal([20.,5.],[0.])),))
     solution = solve(problem, solver)
-    @plottest plot(solution) joinpath(datadir,"anisotropic.png") !istravis
+    @plottest plot(solution,size=(900,300)) joinpath(datadir,"anisotropic.png") !istravis
   end
 end

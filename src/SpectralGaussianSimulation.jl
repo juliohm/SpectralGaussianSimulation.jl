@@ -45,7 +45,7 @@ function preprocess(problem::SimulationProblem, solver::SpecGaussSim)
   
   # retrieve problem info
   pdomain = domain(problem)
-  npts = npoints(pdomain)
+  npts = nelms(pdomain)
   dims = size(pdomain)
   center = CartesianIndex(dims .÷ 2)
   c = LinearIndices(dims)[center]
